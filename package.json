@@ -5,7 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch --loader ts-node/esm src/index.ts",
+    "prisma:generate": "node -r dotenv/config node_modules/.bin/prisma generate",
+    "prisma:migrate": "node -r dotenv/config node_modules/.bin/prisma migrate dev"
   },
   "repository": {
     "type": "git",
@@ -19,6 +22,7 @@
   },
   "homepage": "https://github.com/mykhailokurochkin/flavorai-backend#readme",
   "dependencies": {
+    "@prisma/client": "^6.19.0",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
