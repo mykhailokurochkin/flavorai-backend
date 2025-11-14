@@ -12,14 +12,14 @@ interface AuthRequest extends Request {
 const authRouter = Router();
 
 authRouter.post('/register', async (req: Request, res: Response) => {
-  const { fullname, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-  if (!fullname || !email || !password || password.length < 6) {
-    return res.status(400).json({ error: 'Fullname, email, and password (min 6 chars) are required.' });
+  if (!name || !email || !password || password.length < 6) {
+    return res.status(400).json({ error: 'Name, email, and password (min 6 chars) are required.' });
   }
 
   try {
-    const result = await registerUser(fullname, email, password);
+    const result = await registerUser(name, email, password);
 
     res.cookie('token', result.token, {
       httpOnly: true,
@@ -67,6 +67,19 @@ authRouter.post('/login', async (req: Request, res: Response) => {
     console.error('Login error:', error);
     return res.status(500).json({ error: 'Internal server error during login.' });
   }
+});
+
+authRouter.get('/status', authMiddleware, async (req: AuthRequest, res: Response) => {
+  if (req.userId && req.email) {
+    return res.status(200).json({ id: req.userId, email: req.email });
+  } else {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+});
+
+authRouter.post('/logout', (req: Request, res: Response) => {
+  res.clearCookie('token');
+  return res.status(200).json({ message: 'Logged out successfully' });
 });
 
 export default authRouter;

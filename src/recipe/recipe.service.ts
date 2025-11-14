@@ -2,7 +2,16 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const createRecipe = async (data: { title: string; ingredients: string; instructions:string; userId: number }) => {
+export const createRecipe = async (data: {
+  title: string;
+  description?: string;
+  imageUrl?: string;
+  ingredients: string;
+  instructions: string;
+  preparationTime?: string;
+  difficulty?: string;
+  userId: number;
+}) => {
   return prisma.recipe.create({
     data,
   });
@@ -28,7 +37,24 @@ export const getRecipeById = async (id: number) => {
   });
 };
 
-export const updateRecipe = async (id: number, data: { title?: string; ingredients?: string; instructions?: string }) => {
+export const getRecipesByUserId = async (userId: number) => {
+  return prisma.recipe.findMany({
+    where: { userId },
+  });
+};
+
+export const updateRecipe = async (
+  id: number,
+  data: {
+    title?: string;
+    description?: string;
+    imageUrl?: string;
+    ingredients?: string;
+    instructions?: string;
+    preparationTime?: string;
+    difficulty?: string;
+  }
+) => {
   return prisma.recipe.update({
     where: { id },
     data,

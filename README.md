@@ -62,3 +62,43 @@ To run the frontend, please visit its repository:
 [FlavorAI Frontend Repository](https://github.com/mykhailokurochkin/flavorai-frontend)
 
 The frontend runs on port `3000` and connects to this backend on `http://localhost:4000`.
+
+## API Endpoints
+
+### Authentication
+
+-   `POST /api/auth/register`: Register a new user.
+    -   Request Body: `{ "name": "John Doe", "email": "user@example.com", "password": "yourpassword" }`
+    -   Response: `{ "message": "User registered successfully!", "user": { "id": 1, "name": "John Doe", "email": "user@example.com" } }` (JWT token set in HttpOnly cookie)
+
+-   `POST /api/auth/login`: Log in an existing user.
+    -   Request Body: `{ "email": "user@example.com", "password": "yourpassword" }`
+    -   Response: `{ "message": "Login successful!", "user": { "id": 1, "name": "John Doe", "email": "user@example.com" } }` (JWT token set in HttpOnly cookie)
+
+-   `GET /api/auth/status`: Get the authentication status of the current user. (Auth required)
+    -   Response: `{ "id": 1, "email": "user@example.com" }` if authenticated, or `401 Unauthorized` if not.
+
+-   `POST /api/auth/logout`: Log out the current user by clearing the authentication cookie.
+    -   Response: `{ "message": "Logged out successfully" }`
+
+### Recipes
+
+-   `POST /api/recipes`: Create a new recipe. (Auth required)
+    -   Request Body: `{ "title": "string", "description": "string", "imageUrl": "string", "ingredients": "string", "instructions": "string", "preparationTime": "string", "difficulty": "string" }`
+    -   Response: `{ "id": 1, "title": "string", "description": "string", "imageUrl": "string", "ingredients": "string", "instructions": "string", "preparationTime": "string", "difficulty": "string", "userId": 1, "createdAt": "...", "updatedAt": "...", "averageRating": 0, "totalRatings": 0 }`
+
+-   `GET /api/recipes`: Get all recipes. (Optional: `?search=keyword` for title search)
+    -   Response: `[{ ...recipe_object... }]`
+
+-   `GET /api/recipes/my-recipes`: Get all recipes for the authenticated user. (Auth required)
+    -   Response: `[{ ...recipe_object... }]`
+
+-   `GET /api/recipes/:id`: Get a single recipe by ID.
+    -   Response: `{ ...recipe_object... }`
+
+-   `PUT /api/recipes/:id`: Update a recipe by ID. (Auth required, owner only)
+    -   Request Body: `{ "title"?: "string", "description"?: "string", "imageUrl"?: "string", "ingredients"?: "string", "instructions"?: "string", "preparationTime"?: "string", "difficulty"?: "string" }`
+    -   Response: `{ ...updated_recipe_object... }`
+
+-   `DELETE /api/recipes/:id`: Delete a recipe by ID. (Auth required, owner only)
+    -   Response: (204 No Content)

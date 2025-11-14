@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id       Int     @id @default(autoincrement())
-  fullname String
+  name     String
   email    String  @unique 
   password String  
   
@@ -20,8 +20,12 @@ model User {
 model Recipe {
   id            Int       @id @default(autoincrement())
   title         String
+  description   String? // Optional, as it might not always be provided
+  imageUrl      String?   // Optional, as it might not always be provided
   ingredients   String
   instructions  String
+  preparationTime String? // Optional, as it might not always be provided
+  difficulty    String?   // Optional, as it might not always be provided
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
