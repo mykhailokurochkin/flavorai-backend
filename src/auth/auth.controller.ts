@@ -12,18 +12,24 @@ interface AuthRequest extends Request {
 const authRouter = Router();
 
 authRouter.post('/register', async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { fullname, email, password } = req.body;
 
-  if (!email || !password || password.length < 6) {
-    return res.status(400).json({ error: 'Email and password (min 6 chars) are required.' });
+  if (!fullname || !email || !password || password.length < 6) {
+    return res.status(400).json({ error: 'Fullname, email, and password (min 6 chars) are required.' });
   }
 
   try {
-    const result = await registerUser(email, password);
+    const result = await registerUser(fullname, email, password);
+
+    res.cookie('token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
     return res.status(201).json({
       message: 'User registered successfully!',
       user: result.user,
-      token: result.token
     });
   } catch (error) {
     if (error instanceof Error && error.message.includes('already exists')) {
@@ -43,10 +49,16 @@ authRouter.post('/login', async (req: Request, res: Response) => {
 
   try {
     const result = await loginUser(email, password);
+
+    res.cookie('token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
     return res.status(200).json({
       message: 'Login successful!',
       user: result.user,
-      token: result.token
     });
   } catch (error) {
     if (error instanceof Error && error.message.includes('Invalid credentials')) {

@@ -13,15 +13,13 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.token;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!token) {
     return res
       .status(401)
-      .json({ error: 'Authorization token is not provided or incorrect format' });
+      .json({ error: 'Authorization token is not provided' });
   }
-
-  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = jwt.verify(token as string, JWT_SECRET) as { userId: number; email: string };
